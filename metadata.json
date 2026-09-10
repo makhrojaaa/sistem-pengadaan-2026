@@ -1,0 +1,6 @@
+{
+  "name": "Sistem Laporan Pengadaan 2026",
+  "description": "Sistem informasi pengelolaan, pencatatan, pemantauan, dan pelaporan pengadaan barang dan jasa BPS Kabupaten Tanah Datar tahun 2026.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
