@@ -67,6 +67,9 @@ export function exportMonthlyReportToExcel(
   // 2. Summary Sheet
   const summaryData = [
     { Parameter: 'Nama Instansi', Nilai: instansi },
+    { Parameter: 'Alamat Kantor', Nilai: 'Jl. Imam Bonjol No.17, Limo Kaum, Kec. Lima Kaum, Kabupaten Tanah Datar, Sumatera Barat 27213' },
+    { Parameter: 'Kontak Kantor', Nilai: 'Telp: (62-752) 71598 | Faks: (62-752) 72593 | Mailbox: bps1305@bps.go.id' },
+    { Parameter: 'Website Resmi', Nilai: 'https://tanahdatarkab.bps.go.id/id' },
     { Parameter: 'Tahun Anggaran', Nilai: tahun },
     { Parameter: 'Periode Pelaporan', Nilai: `${namaBulan} ${tahun}` },
     { Parameter: 'Total Jumlah Paket Pengadaan', Nilai: pengadaanList.length },
@@ -74,7 +77,7 @@ export function exportMonthlyReportToExcel(
     { Parameter: 'Tanggal Dokumen Dibuat', Nilai: new Date().toLocaleDateString('id-ID') },
   ];
   const summarySheet = XLSX.utils.json_to_sheet(summaryData);
-  summarySheet['!cols'] = [{ wch: 32 }, { wch: 45 }];
+  summarySheet['!cols'] = [{ wch: 32 }, { wch: 75 }];
   XLSX.utils.book_append_sheet(workbook, summarySheet, 'Identitas & Ringkasan');
 
   XLSX.writeFile(workbook, filename);

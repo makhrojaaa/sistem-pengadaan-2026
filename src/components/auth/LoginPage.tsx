@@ -147,6 +147,23 @@ export const LoginPage: React.FC = () => {
             <div className="space-y-2">
               <button
                 type="button"
+                onClick={() => handleQuickSelect('ppk@bps.go.id')}
+                className="w-full text-left px-3 py-2.5 rounded-lg bg-[#071B33] hover:bg-[#11315B] border border-[#1D4A7E] text-xs flex items-center justify-between text-slate-200 transition-colors cursor-pointer"
+              >
+                <div className="flex items-center gap-2">
+                  <UserCheck className="w-4 h-4 text-[#F58220]" />
+                  <div>
+                    <div className="font-bold text-white">Wirda Elsa Hutari, S.Si., M.M.</div>
+                    <div className="text-[11px] text-[#F58220] font-medium">PPK • NIP 198908182019032002</div>
+                  </div>
+                </div>
+                <span className="text-[10px] px-2 py-0.5 rounded font-bold bg-[#F58220]/20 text-amber-300 border border-[#F58220]/40">
+                  Pilih
+                </span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => handleQuickSelect('pejabat.pbj@bps.go.id')}
                 className="w-full text-left px-3 py-2.5 rounded-lg bg-[#071B33] hover:bg-[#11315B] border border-[#1D4A7E] text-xs flex items-center justify-between text-slate-200 transition-colors cursor-pointer"
               >
@@ -154,7 +171,7 @@ export const LoginPage: React.FC = () => {
                   <UserCheck className="w-4 h-4 text-[#48A942]" />
                   <div>
                     <div className="font-bold text-white">Firdaus, SST, M.T</div>
-                    <div className="text-[11px] text-[#F58220] font-medium">Pejabat Pengadaan • BPS Kab. Tanah Datar</div>
+                    <div className="text-[11px] text-[#48A942] font-medium">Pejabat Pengadaan • NIP 198602072009021004</div>
                   </div>
                 </div>
                 <span className="text-[10px] px-2 py-0.5 rounded font-bold bg-[#48A942]/20 text-emerald-300 border border-[#48A942]/40">

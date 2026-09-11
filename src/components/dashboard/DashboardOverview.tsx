@@ -406,7 +406,37 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
           </button>
         </div>
 
-        <div className="mt-4 overflow-x-auto">
+        {/* Mobile View: Cards */}
+        <div className="md:hidden mt-3 space-y-2.5">
+          {recentList.map((p) => (
+            <div
+              key={p.id}
+              onClick={() => onSelectPengadaan(p.id)}
+              className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5 cursor-pointer hover:border-blue-300 transition-colors"
+            >
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-mono font-bold text-blue-900">{p.nomor_pengadaan}</span>
+                <span
+                  className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                    p.status === 'Selesai'
+                      ? 'bg-emerald-100 text-emerald-800'
+                      : 'bg-amber-100 text-amber-800'
+                  }`}
+                >
+                  {p.status}
+                </span>
+              </div>
+              <p className="font-semibold text-xs text-slate-900 line-clamp-2">{p.nama_pengadaan}</p>
+              <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-200/70">
+                <span className="text-[11px] text-slate-500">{formatTanggalIndo(p.tanggal)}</span>
+                <strong className="text-emerald-700 font-bold">{formatRupiah(p.nilai)}</strong>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop View: Table */}
+        <div className="hidden md:block mt-4 overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold uppercase">

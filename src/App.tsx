@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navbar } from './components/layout/Navbar';
 import { Sidebar, AppView } from './components/layout/Sidebar';
+import { MobileBottomNav } from './components/layout/MobileBottomNav';
 import { LoginPage } from './components/auth/LoginPage';
 import { DashboardOverview } from './components/dashboard/DashboardOverview';
 import { DaftarPengadaan } from './components/pengadaan/DaftarPengadaan';
@@ -17,6 +18,7 @@ function MainApp() {
   const [editPengadaanId, setEditPengadaanId] = useState<string | null>(null);
   const [isDbModalOpen, setIsDbModalOpen] = useState(false);
   const [reloadTrigger, setReloadTrigger] = useState(0);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -53,37 +55,43 @@ function MainApp() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleNavigate = (view: AppView) => {
+    if (view === 'tambah-pengadaan') {
+      setEditPengadaanId(null);
+    }
+    setCurrentView(view);
+    setIsMobileMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 flex flex-col font-sans">
-      {/* Topbar */}
-      <Navbar onOpenDatabaseModal={() => setIsDbModalOpen(true)} />
+      {/* Topbar with Mobile Menu Button */}
+      <Navbar
+        onOpenDatabaseModal={() => setIsDbModalOpen(true)}
+        isMobileMenuOpen={isMobileMenuOpen}
+        onToggleMobileMenu={() => setIsMobileMenuOpen((prev) => !prev)}
+      />
 
       {/* Main Workspace Layout */}
       <div className="flex-1 flex flex-col md:flex-row">
-        {/* Sidebar Navigation */}
+        {/* Sidebar Navigation (Persistent on Desktop, Off-canvas on Mobile) */}
         <Sidebar
           currentView={currentView}
-          onNavigate={(view) => {
-            if (view === 'tambah-pengadaan') {
-              setEditPengadaanId(null);
-            }
-            setCurrentView(view);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
+          onNavigate={handleNavigate}
           onOpenDatabaseModal={() => setIsDbModalOpen(true)}
+          mobileOpen={isMobileMenuOpen}
+          onCloseMobile={() => setIsMobileMenuOpen(false)}
         />
 
-        {/* Content Viewport */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+        {/* Content Viewport (Fluid & Optimized for Mobile Android, Tablet & Full-Screen Desktops) */}
+        <main className="flex-1 p-3 sm:p-6 lg:p-8 pb-20 md:pb-8 w-full max-w-[1680px] mx-auto transition-all">
           {currentView === 'dashboard' && (
             <DashboardOverview
               key={reloadTrigger}
-              onNavigateToPengadaan={() => setCurrentView('pengadaan')}
-              onNavigateToTambah={() => {
-                setEditPengadaanId(null);
-                setCurrentView('tambah-pengadaan');
-              }}
-              onNavigateToLaporan={() => setCurrentView('laporan')}
+              onNavigateToPengadaan={() => handleNavigate('pengadaan')}
+              onNavigateToTambah={() => handleNavigate('tambah-pengadaan')}
+              onNavigateToLaporan={() => handleNavigate('laporan')}
               onSelectPengadaan={handleSelectPengadaan}
             />
           )}
@@ -91,10 +99,7 @@ function MainApp() {
           {currentView === 'pengadaan' && (
             <DaftarPengadaan
               key={reloadTrigger}
-              onNavigateToTambah={() => {
-                setEditPengadaanId(null);
-                setCurrentView('tambah-pengadaan');
-              }}
+              onNavigateToTambah={() => handleNavigate('tambah-pengadaan')}
               onSelectPengadaan={handleSelectPengadaan}
               onEditPengadaan={handleEditPengadaan}
             />
@@ -103,7 +108,7 @@ function MainApp() {
           {currentView === 'tambah-pengadaan' && (
             <FormPengadaan
               editId={null}
-              onBack={() => setCurrentView('pengadaan')}
+              onBack={() => handleNavigate('pengadaan')}
               onSuccess={handleCreateSuccess}
             />
           )}
@@ -111,7 +116,7 @@ function MainApp() {
           {currentView === 'edit-pengadaan' && (
             <FormPengadaan
               editId={editPengadaanId}
-              onBack={() => setCurrentView('pengadaan')}
+              onBack={() => handleNavigate('pengadaan')}
               onSuccess={handleCreateSuccess}
             />
           )}
@@ -119,7 +124,7 @@ function MainApp() {
           {currentView === 'detail-pengadaan' && selectedPengadaanId && (
             <DetailPengadaan
               pengadaanId={selectedPengadaanId}
-              onBack={() => setCurrentView('pengadaan')}
+              onBack={() => handleNavigate('pengadaan')}
               onEdit={handleEditPengadaan}
             />
           )}
@@ -127,6 +132,9 @@ function MainApp() {
           {currentView === 'laporan' && <LaporanBulanan key={reloadTrigger} />}
         </main>
       </div>
+
+      {/* Quick Mobile Bottom Navigation (Ergonomic for Android Phones) */}
+      <MobileBottomNav currentView={currentView} onNavigate={handleNavigate} />
 
       {/* Database & SQL Schema Configuration Modal */}
       <DatabaseConfigModal

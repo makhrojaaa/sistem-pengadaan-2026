@@ -2,32 +2,49 @@ import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import { BPSLogo } from '../common/BPSLogo';
-import { Database, LogOut, Calendar, UserCheck } from 'lucide-react';
+import { Database, LogOut, Calendar, UserCheck, Menu, X } from 'lucide-react';
 
 interface NavbarProps {
   onOpenDatabaseModal: () => void;
+  isMobileMenuOpen?: boolean;
+  onToggleMobileMenu?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenDatabaseModal }) => {
+export const Navbar: React.FC<NavbarProps> = ({
+  onOpenDatabaseModal,
+  isMobileMenuOpen = false,
+  onToggleMobileMenu,
+}) => {
   const { user, logout } = useAuth();
 
   return (
     <header className="bg-[#071E3D] border-b border-[#11325C] text-white sticky top-0 z-30 shadow-md">
-      <div className="px-4 sm:px-6 lg:px-8">
+      <div className="px-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Brand & BPS Identity */}
-          <div className="flex items-center gap-3">
+          {/* Brand & Mobile Hamburger Toggle */}
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            {onToggleMobileMenu && (
+              <button
+                type="button"
+                onClick={onToggleMobileMenu}
+                title="Buka / Tutup Menu"
+                className="md:hidden p-2 rounded-lg text-slate-200 hover:text-white hover:bg-[#113054] border border-[#183F6D] transition-colors cursor-pointer"
+              >
+                {isMobileMenuOpen ? <X className="w-5 h-5 text-amber-400" /> : <Menu className="w-5 h-5" />}
+              </button>
+            )}
+
             <BPSLogo size="md" />
             <div>
-              <div className="flex items-center gap-2">
-                <span className="text-base font-bold text-white tracking-tight">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="text-sm sm:text-base font-bold text-white tracking-tight leading-tight">
                   Sistem Laporan Pengadaan
                 </span>
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-[#005C9E] text-white border border-sky-400/30">
+                <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-bold bg-[#005C9E] text-white border border-sky-400/30">
                   TA 2026
                 </span>
               </div>
-              <p className="text-xs text-[#F58220] font-semibold hidden sm:block">
+              <p className="text-[11px] sm:text-xs text-[#F58220] font-semibold">
                 Badan Pusat Statistik Kabupaten Tanah Datar
               </p>
             </div>

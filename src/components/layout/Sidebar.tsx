@@ -9,6 +9,7 @@ import {
   Database,
   LogOut,
   UserCheck,
+  X,
 } from 'lucide-react';
 
 export type AppView = 'dashboard' | 'pengadaan' | 'tambah-pengadaan' | 'detail-pengadaan' | 'edit-pengadaan' | 'laporan';
@@ -17,9 +18,17 @@ interface SidebarProps {
   currentView: AppView;
   onNavigate: (view: AppView) => void;
   onOpenDatabaseModal: () => void;
+  mobileOpen?: boolean;
+  onCloseMobile?: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate, onOpenDatabaseModal }) => {
+export const Sidebar: React.FC<SidebarProps> = ({
+  currentView,
+  onNavigate,
+  onOpenDatabaseModal,
+  mobileOpen = false,
+  onCloseMobile,
+}) => {
   const { user, logout } = useAuth();
 
   const navItems = [
@@ -49,10 +58,34 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate, onOpe
     },
   ];
 
-  return (
-    <aside className="w-64 bg-[#081B33] border-r border-[#153258] text-slate-200 flex flex-col flex-shrink-0 min-h-[calc(100vh-4rem)] select-none">
+  const handleItemClick = (view: AppView) => {
+    onNavigate(view);
+    if (onCloseMobile) {
+      onCloseMobile();
+    }
+  };
+
+  const sidebarContent = (
+    <div className="flex flex-col h-full select-none">
+      {/* Mobile Drawer Header */}
+      <div className="md:hidden flex items-center justify-between p-4 border-b border-[#153258] bg-[#051426]">
+        <div className="flex items-center gap-2">
+          <BPSLogo size="sm" />
+          <span className="font-bold text-sm text-white">Menu Navigasi PBJ</span>
+        </div>
+        {onCloseMobile && (
+          <button
+            type="button"
+            onClick={onCloseMobile}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
+      </div>
+
       {/* Navigation Links */}
-      <div className="p-4 flex-1 space-y-1.5">
+      <div className="p-4 flex-1 space-y-1.5 overflow-y-auto">
         {/* BPS Quick Section Label */}
         <div className="flex items-center justify-between px-3 py-1.5">
           <span className="text-[11px] font-bold text-sky-400 uppercase tracking-wider">
@@ -68,26 +101,37 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate, onOpe
               key={item.id}
               id={`nav-${item.id}`}
               type="button"
-              onClick={() => onNavigate(item.id)}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-left cursor-pointer ${
+              onClick={() => handleItemClick(item.id)}
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all text-left cursor-pointer ${
                 item.active
-                  ? 'bg-gradient-to-r from-[#005C9E] to-[#0274c4] text-white shadow-md shadow-[#005C9E]/30 font-semibold border-l-4 border-[#F58220]'
+                  ? 'bg-[#005C9E] text-white shadow-sm border border-sky-400/40 translate-x-1'
                   : 'text-slate-300 hover:bg-[#112948] hover:text-white'
               }`}
             >
-              <Icon className={`w-4 h-4 ${item.active ? 'text-[#F58220]' : 'text-sky-300/70'}`} />
+              <Icon
+                className={`w-4 h-4 ${
+                  item.active ? 'text-[#F58220]' : 'text-slate-400'
+                }`}
+              />
               <span>{item.label}</span>
             </button>
           );
         })}
 
-        <div className="pt-5 px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-          Administrasi & Data
+        <div className="pt-4 pb-1">
+          <div className="border-t border-[#153258] my-2" />
+          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-3">
+            Administrasi
+          </span>
         </div>
 
         <button
+          id="nav-sql-supabase"
           type="button"
-          onClick={onOpenDatabaseModal}
+          onClick={() => {
+            onOpenDatabaseModal();
+            if (onCloseMobile) onCloseMobile();
+          }}
           className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-left text-slate-300 hover:bg-[#112948] hover:text-white cursor-pointer"
         >
           <Database className="w-4 h-4 text-emerald-400" />
@@ -123,7 +167,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate, onOpe
             <div className="flex items-center gap-1.5 min-w-0">
               <UserCheck className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
               <span className="text-slate-300 truncate font-medium">
-                Admin Sistem
+                {user?.name || 'Admin Sistem'}
               </span>
             </div>
           </div>
@@ -138,6 +182,31 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onNavigate, onOpe
           <span>Keluar Sistem</span>
         </button>
       </div>
-    </aside>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Desktop Persistent Sidebar */}
+      <aside className="hidden md:flex w-64 bg-[#081B33] border-r border-[#153258] text-slate-200 flex-col flex-shrink-0 min-h-[calc(100vh-4rem)] select-none">
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile Drawer with Backdrop */}
+      {mobileOpen && (
+        <div className="md:hidden fixed inset-0 z-50 flex">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
+            onClick={onCloseMobile}
+          />
+
+          {/* Slide Drawer */}
+          <aside className="relative w-72 max-w-[80vw] bg-[#081B33] text-slate-200 shadow-2xl flex flex-col z-10 animate-in slide-in-from-left duration-200">
+            {sidebarContent}
+          </aside>
+        </div>
+      )}
+    </>
   );
 };

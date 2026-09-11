@@ -53,7 +53,7 @@ export interface User {
   email: string;
   name: string;
   nip?: string;
-  role: 'Admin Sistem' | 'Administrator PBJ' | 'Pejabat Pengadaan' | 'Auditor / Pengawas';
+  role: 'Admin Sistem' | 'Administrator PBJ' | 'Pejabat Pengadaan' | 'Pejabat Pembuat Komitmen' | 'Auditor / Pengawas';
   instansi: string;
 }
 
@@ -64,6 +64,7 @@ export interface FilterPengadaan {
   metode: string; // 'all' | MetodePengadaan
   status: string; // 'all' | StatusPengadaan
   search: string;
+  is_archived?: boolean;
 }
 
 export interface DashboardStats {

@@ -68,6 +68,12 @@ export async function fetchPengadaanList(filter?: Partial<FilterPengadaan>): Pro
     try {
       let query = supabase.from('pengadaan').select('*').order('tanggal', { ascending: false });
 
+      if (filter?.is_archived) {
+        query = query.eq('is_archived', true);
+      } else {
+        query = query.or('is_archived.is.null,is_archived.eq.false');
+      }
+
       if (filter?.tahun && filter.tahun !== 'all') {
         query = query.gte('tanggal', `${filter.tahun}-01-01`).lte('tanggal', `${filter.tahun}-12-31`);
       }
@@ -123,7 +129,8 @@ export async function fetchPengadaanList(filter?: Partial<FilterPengadaan>): Pro
   }
 
   // Local persistent storage
-  const all = getLocalPengadaan().filter((p) => !p.is_archived);
+  const wantArchived = Boolean(filter?.is_archived);
+  const all = getLocalPengadaan().filter((p) => (wantArchived ? Boolean(p.is_archived) : !p.is_archived));
   const docs = getLocalDokumen();
   const docCountMap: Record<string, number> = {};
   docs.forEach((d) => {
@@ -301,6 +308,30 @@ export async function archivePengadaan(id: string, currentUserEmail: string): Pr
   const idx = list.findIndex((p) => p.id === id);
   if (idx !== -1) {
     list[idx].is_archived = true;
+    list[idx].updated_by = currentUserEmail;
+    list[idx].updated_at = new Date().toISOString();
+    saveLocalPengadaan(list);
+    return true;
+  }
+  return false;
+}
+
+export async function unarchivePengadaan(id: string, currentUserEmail: string): Promise<boolean> {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      await supabase
+        .from('pengadaan')
+        .update({ is_archived: false, updated_by: currentUserEmail, updated_at: new Date().toISOString() })
+        .eq('id', id);
+    } catch (e) {
+      console.warn('Supabase unarchive fallback:', e);
+    }
+  }
+
+  const list = getLocalPengadaan();
+  const idx = list.findIndex((p) => p.id === id);
+  if (idx !== -1) {
+    list[idx].is_archived = false;
     list[idx].updated_by = currentUserEmail;
     list[idx].updated_at = new Date().toISOString();
     saveLocalPengadaan(list);

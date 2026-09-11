@@ -16,11 +16,19 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const STORAGE_AUTH_USER = 'SPP_AUTH_USER_SESSION';
 
 const DEMO_USERS: Record<string, User> = {
+  'ppk@bps.go.id': {
+    id: 'usr-ppk-01',
+    email: 'ppk@bps.go.id',
+    name: 'Wirda Elsa Hutari, S.Si., M.M.',
+    nip: '198908182019032002',
+    role: 'Pejabat Pembuat Komitmen',
+    instansi: 'BPS Kabupaten Tanah Datar',
+  },
   'pejabat.pbj@bps.go.id': {
     id: 'usr-pejabat-01',
     email: 'pejabat.pbj@bps.go.id',
     name: 'Firdaus, SST, M.T',
-    nip: '198205142005011002',
+    nip: '198602072009021004',
     role: 'Pejabat Pengadaan',
     instansi: 'BPS Kabupaten Tanah Datar',
   },
@@ -44,7 +52,7 @@ const DEMO_USERS: Record<string, User> = {
     id: 'usr-pejabat-02',
     email: 'pejabat.pbj@instansi.go.id',
     name: 'Firdaus, SST, M.T',
-    nip: '198205142005011002',
+    nip: '198602072009021004',
     role: 'Pejabat Pengadaan',
     instansi: 'BPS Kabupaten Tanah Datar',
   },

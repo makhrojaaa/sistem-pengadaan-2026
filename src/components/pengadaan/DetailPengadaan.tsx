@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Pengadaan, DokumenPengadaan } from '../../types';
-import { fetchPengadaanById, deleteDokumen } from '../../lib/database';
+import { fetchPengadaanById, deleteDokumen, archivePengadaan, unarchivePengadaan } from '../../lib/database';
 import { formatRupiah, formatTanggalIndo, formatWaktuIndo, formatFileSize } from '../../lib/formatters';
 import { UploadDokumenModal } from './UploadDokumenModal';
 import { DocumentPreviewModal } from './DocumentPreviewModal';
@@ -22,6 +22,8 @@ import {
   ShieldCheck,
   AlertCircle,
   FileSpreadsheet,
+  Archive,
+  RotateCcw,
 } from 'lucide-react';
 
 interface DetailPengadaanProps {
@@ -71,6 +73,28 @@ export const DetailPengadaan: React.FC<DetailPengadaanProps> = ({
     loadDetail();
   };
 
+  const handleArchive = async () => {
+    if (!data) return;
+    const confirm = window.confirm(
+      `Apakah Anda yakin ingin mengarsipkan kegiatan pengadaan nomor "${data.nomor_pengadaan}"?\nKegiatan ini akan dipindahkan ke tab "Dokumen Terarsip".`
+    );
+    if (confirm && user) {
+      await archivePengadaan(data.id, user.email);
+      loadDetail();
+    }
+  };
+
+  const handleUnarchive = async () => {
+    if (!data) return;
+    const confirm = window.confirm(
+      `Apakah Anda yakin ingin memulihkan kegiatan pengadaan nomor "${data.nomor_pengadaan}" kembali ke daftar aktif?`
+    );
+    if (confirm && user) {
+      await unarchivePengadaan(data.id, user.email);
+      loadDetail();
+    }
+  };
+
   if (loading || !data) {
     return (
       <div className="p-12 text-center text-slate-500">
@@ -100,7 +124,29 @@ export const DetailPengadaan: React.FC<DetailPengadaanProps> = ({
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {data.is_archived ? (
+            <button
+              type="button"
+              onClick={handleUnarchive}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-3.5 py-2 rounded-lg border border-emerald-300 shadow-2xs transition-colors cursor-pointer"
+              title="Pulihkan dokumen ini kembali ke daftar pengadaan aktif"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Pulihkan dari Arsip</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleArchive}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 bg-white hover:bg-red-50 hover:text-red-700 hover:border-red-300 px-3.5 py-2 rounded-lg border border-slate-300 shadow-2xs transition-colors cursor-pointer"
+              title="Arsipkan kegiatan pengadaan ini"
+            >
+              <Archive className="w-3.5 h-3.5 text-slate-400" />
+              <span>Arsipkan</span>
+            </button>
+          )}
+
           <button
             type="button"
             onClick={() => onEdit(data.id)}
@@ -120,6 +166,27 @@ export const DetailPengadaan: React.FC<DetailPengadaanProps> = ({
           </button>
         </div>
       </div>
+
+      {/* Banner Status Terarsip */}
+      {data.is_archived && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 sm:p-4 text-xs text-amber-900 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+          <div className="flex items-center gap-2.5">
+            <Archive className="w-5 h-5 text-amber-600 flex-shrink-0" />
+            <div>
+              <strong className="block font-bold">Status Dokumen: Terarsip</strong>
+              <span className="text-amber-700">Kegiatan ini berada dalam kotak Dokumen Terarsip dan tidak muncul di daftar pengadaan aktif utama.</span>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={handleUnarchive}
+            className="self-start sm:self-auto px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-xs shadow-2xs cursor-pointer flex items-center gap-1.5 transition-colors"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Pulihkan ke Pengadaan Aktif</span>
+          </button>
+        </div>
+      )}
 
       {/* Primary Procurement Information Card (Point 9) */}
       <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-6 sm:p-8">

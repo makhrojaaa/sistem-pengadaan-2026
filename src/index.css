@@ -1,1 +1,136 @@
 @import "tailwindcss";
+
+/* ==========================================================================
+   OFFICIAL GOVERNMENT DOCUMENT PRINT STYLES (TATA NASKAH DINAS PEMERINTAH RI)
+   ========================================================================== */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 8mm 10mm 8mm 10mm;
+  }
+
+  /* Sembunyikan elemen antarmuka website dan elemen non-cetak */
+  header,
+  aside,
+  nav,
+  .print\:hidden,
+  .no-print,
+  button,
+  select,
+  .mobile-bottom-nav,
+  [id^="btn-"],
+  .modal-toolbar,
+  .modal-overlay {
+    display: none !important;
+  }
+
+  /* Jika modal preview aktif saat cetak, sembunyikan backdrop dan toolbar */
+  .fixed.inset-0 {
+    position: static !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    overflow: visible !important;
+  }
+
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    font-family: 'Public Sans', 'Liberation Sans', Arial, Helvetica, sans-serif !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 8.5pt !important;
+    line-height: 1.25 !important;
+    width: 100% !important;
+  }
+
+  main {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Target tunggal kontainer dokumen resmi */
+  #official-government-report,
+  .print-document-container {
+    display: block !important;
+    position: relative !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #ffffff !important;
+  }
+
+  /* Formal Government Table Styling - Terkunci 100% agar tidak meluber keluar kertas */
+  table {
+    width: 100% !important;
+    max-width: 100% !important;
+    table-layout: fixed !important;
+    border-collapse: collapse !important;
+    font-size: 7.5pt !important;
+    line-height: 1.2 !important;
+    margin-bottom: 4px !important;
+  }
+
+  th, td {
+    border: 1px solid #0f172a !important;
+    padding: 3px 4px !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
+    vertical-align: middle !important;
+  }
+
+  th {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    font-size: 7.5pt !important;
+  }
+
+  td {
+    color: #0f172a !important;
+  }
+
+  thead {
+    display: table-header-group !important;
+  }
+
+  tfoot {
+    display: table-footer-group !important;
+  }
+
+  tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .avoid-break {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Kop Surat Kedinasan Pemerintah */
+  .kop-surat-dinas {
+    border-bottom: 3px double #000000 !important;
+    padding-bottom: 6px !important;
+    margin-bottom: 10px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Kolom Pengesahan dan Tanda Tangan Kedinasan */
+  .lembar-pengesahan-dinas {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    margin-top: 14px !important;
+    padding-top: 8px !important;
+  }
+}
