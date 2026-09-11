@@ -398,8 +398,8 @@ export const LaporanBulanan: React.FC = () => {
                       <td className="py-1.5 px-1 text-center whitespace-nowrap font-bold text-[10px]">
                         <span
                           className={`px-1.5 py-0.5 rounded text-[9.5px] ${p.status === 'Selesai'
-                              ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                              : 'bg-amber-100 text-amber-800 border border-amber-300'
+                            ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                            : 'bg-amber-100 text-amber-800 border border-amber-300'
                             }`}
                         >
                           {p.status}

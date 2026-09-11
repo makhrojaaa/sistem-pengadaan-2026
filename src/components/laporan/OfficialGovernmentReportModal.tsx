@@ -99,7 +99,7 @@ export const OfficialGovernmentReportModal: React.FC<OfficialGovernmentReportMod
                     BADAN PUSAT STATISTIK
                   </h1>
                   <h2 className="text-sm sm:text-base font-extrabold tracking-wider text-slate-900 uppercase leading-tight mt-0.5">
-                    BPS KABUPATEN TANAH DATAR
+                    KABUPATEN TANAH DATAR
                   </h2>
                   <p className="text-[11px] text-slate-700 leading-tight mt-1">
                     Jl. Imam Bonjol No.17, Limo Kaum, Kec. Lima Kaum, Kabupaten Tanah Datar, Sumatera Barat 27213
@@ -256,11 +256,7 @@ export const OfficialGovernmentReportModal: React.FC<OfficialGovernmentReportMod
                   </p>
                   <p className="text-[11px] text-slate-700">Badan Pusat Statistik Kabupaten Tanah Datar</p>
 
-                  <div className="h-24 flex items-center justify-center text-slate-400 text-[11px] italic">
-                    (Tanda Tangan & Cap Dinas)
-                  </div>
-
-                  <p className="font-black text-slate-900 underline text-[13px]">
+                  <p className="font-black text-slate-900 underline text-[13px] mt-24">
                     Wirda Elsa Hutari, S.Si., M.M.
                   </p>
                   <p className="text-slate-800 font-mono mt-0.5 font-bold">
@@ -276,11 +272,7 @@ export const OfficialGovernmentReportModal: React.FC<OfficialGovernmentReportMod
                   </p>
                   <p className="text-[11px] text-slate-700">Badan Pusat Statistik Kabupaten Tanah Datar</p>
 
-                  <div className="h-24 flex items-center justify-center text-slate-400 text-[11px] italic">
-                    (Tanda Tangan & Cap Dinas)
-                  </div>
-
-                  <p className="font-black text-slate-900 underline text-[13px]">
+                  <p className="font-black text-slate-900 underline text-[13px] mt-24">
                     Firdaus, SST, M.T
                   </p>
                   <p className="text-slate-800 font-mono mt-0.5 font-bold">

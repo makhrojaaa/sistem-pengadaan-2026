@@ -19,7 +19,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header className="bg-[#071E3D] border-b border-[#11325C] text-white sticky top-0 z-30 shadow-md">
-      <div className="px-3 sm:px-6 lg:px-8">
+      <div className="w-full px-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Brand & Mobile Hamburger Toggle */}
           <div className="flex items-center gap-2.5 sm:gap-3">
