@@ -160,9 +160,8 @@ export const LaporanBulanan: React.FC = () => {
       {/* Official Government Report Document Sheet (Prints with Government Letterhead) */}
       <div
         id="official-government-report"
-        className={`print-document-container bg-white border border-slate-300 rounded-xl shadow-md p-6 sm:p-10 lg:p-12 text-slate-900 print:border-none print:shadow-none print:p-0 ${
-          isGovModalOpen ? 'print:hidden' : ''
-        }`}
+        className={`print-document-container bg-white border border-slate-300 rounded-xl shadow-md p-6 sm:p-10 lg:p-12 text-slate-900 print:border-none print:shadow-none print:p-0 ${isGovModalOpen ? 'print:hidden' : ''
+          }`}
       >
         {/* Official Kop Surat / Letterhead Standar Pemerintah RI */}
         <div className="kop-surat-dinas border-b-[3px] border-double border-slate-900 pb-3 mb-6">
@@ -175,7 +174,7 @@ export const LaporanBulanan: React.FC = () => {
                 BADAN PUSAT STATISTIK
               </h2>
               <h3 className="text-xs sm:text-sm md:text-base font-extrabold tracking-wider text-slate-900 uppercase leading-tight mt-0.5">
-                BPS KABUPATEN TANAH DATAR
+                KABUPATEN TANAH DATAR
               </h3>
               <p className="text-[10px] sm:text-[11px] text-slate-700 leading-tight mt-1">
                 Jl. Imam Bonjol No.17, Limo Kaum, Kec. Lima Kaum, Kabupaten Tanah Datar, Sumatera Barat 27213
@@ -398,11 +397,10 @@ export const LaporanBulanan: React.FC = () => {
                       </td>
                       <td className="py-1.5 px-1 text-center whitespace-nowrap font-bold text-[10px]">
                         <span
-                          className={`px-1.5 py-0.5 rounded text-[9.5px] ${
-                            p.status === 'Selesai'
+                          className={`px-1.5 py-0.5 rounded text-[9.5px] ${p.status === 'Selesai'
                               ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                               : 'bg-amber-100 text-amber-800 border border-amber-300'
-                          }`}
+                            }`}
                         >
                           {p.status}
                         </span>
@@ -446,11 +444,8 @@ export const LaporanBulanan: React.FC = () => {
               </p>
               <p className="text-[11px] text-slate-600">Badan Pusat Statistik Kabupaten Tanah Datar</p>
 
-              <div className="h-24 flex items-center justify-center text-slate-400 text-[11px] italic">
-                (Tanda Tangan & Cap Dinas)
-              </div>
 
-              <p className="font-black text-slate-900 underline text-[13px]">
+              <p className="font-black text-slate-900 underline text-[13px] mt-24">
                 Wirda Elsa Hutari, S.Si., M.M.
               </p>
               <p className="text-slate-900 font-mono mt-0.5 font-bold">
@@ -466,11 +461,7 @@ export const LaporanBulanan: React.FC = () => {
               </p>
               <p className="text-[11px] text-slate-600">Badan Pusat Statistik Kabupaten Tanah Datar</p>
 
-              <div className="h-24 flex items-center justify-center text-slate-400 text-[11px] italic">
-                (Tanda Tangan & Cap Dinas)
-              </div>
-
-              <p className="font-black text-slate-900 underline text-[13px]">
+              <p className="font-black text-slate-900 underline text-[13px] mt-24">
                 Firdaus, SST, M.T
               </p>
               <p className="text-slate-900 font-mono mt-0.5 font-bold">
