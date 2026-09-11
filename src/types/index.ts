@@ -53,7 +53,7 @@ export interface User {
   email: string;
   name: string;
   nip?: string;
-  role: 'Administrator PBJ' | 'Pejabat Pengadaan' | 'Auditor / Pengawas';
+  role: 'Admin Sistem' | 'Administrator PBJ' | 'Pejabat Pengadaan' | 'Auditor / Pengawas';
   instansi: string;
 }
 

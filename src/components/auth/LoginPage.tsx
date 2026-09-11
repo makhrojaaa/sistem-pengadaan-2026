@@ -170,8 +170,8 @@ export const LoginPage: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <Building2 className="w-4 h-4 text-sky-400" />
                   <div>
-                    <div className="font-bold text-white">Administrator PBJ</div>
-                    <div className="text-[11px] text-slate-400">admin.pengadaan@bps.go.id</div>
+                    <div className="font-bold text-white">Admin Sistem</div>
+                    <div className="text-[11px] text-[#F58220] font-medium">admin.pengadaan@bps.go.id • BPS Kab. Tanah Datar</div>
                   </div>
                 </div>
                 <span className="text-[10px] px-2 py-0.5 rounded font-bold bg-[#005C9E]/30 text-sky-300 border border-[#005C9E]/50">

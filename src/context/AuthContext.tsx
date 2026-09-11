@@ -27,9 +27,17 @@ const DEMO_USERS: Record<string, User> = {
   'admin.pengadaan@bps.go.id': {
     id: 'usr-admin-01',
     email: 'admin.pengadaan@bps.go.id',
-    name: 'Drs. Hendra Setiawan, M.Si',
+    name: 'Admin Sistem',
     nip: '197908152003121002',
-    role: 'Administrator PBJ',
+    role: 'Admin Sistem',
+    instansi: 'BPS Kabupaten Tanah Datar',
+  },
+  'admin@bps.go.id': {
+    id: 'usr-admin-00',
+    email: 'admin@bps.go.id',
+    name: 'Admin Sistem',
+    nip: '197908152003121002',
+    role: 'Admin Sistem',
     instansi: 'BPS Kabupaten Tanah Datar',
   },
   'pejabat.pbj@instansi.go.id': {
@@ -43,9 +51,9 @@ const DEMO_USERS: Record<string, User> = {
   'admin.pengadaan@instansi.go.id': {
     id: 'usr-admin-02',
     email: 'admin.pengadaan@instansi.go.id',
-    name: 'Drs. Hendra Setiawan, M.Si',
+    name: 'Admin Sistem',
     nip: '197908152003121002',
-    role: 'Administrator PBJ',
+    role: 'Admin Sistem',
     instansi: 'BPS Kabupaten Tanah Datar',
   },
   'auditor.inspektorat@instansi.go.id': {
@@ -87,11 +95,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (saved) {
           const parsed = JSON.parse(saved);
           parsed.instansi = 'BPS Kabupaten Tanah Datar';
-          if (parsed.role === 'Pejabat Pengadaan' || parsed.email?.includes('pejabat')) {
-            parsed.name = 'Firdaus, SST, M.T';
+          if (parsed.role === 'Administrator PBJ' || parsed.email?.includes('admin') || parsed.role === 'Admin Sistem') {
+            parsed.name = 'Admin Sistem';
+            parsed.role = 'Admin Sistem';
           }
           setUser(parsed);
           localStorage.setItem(STORAGE_AUTH_USER, JSON.stringify(parsed));
+        } else {
+          // Default session to Admin Sistem for immediate evaluation
+          const defaultAdmin = DEMO_USERS['admin.pengadaan@bps.go.id'];
+          setUser(defaultAdmin);
+          localStorage.setItem(STORAGE_AUTH_USER, JSON.stringify(defaultAdmin));
         }
       } catch (err) {
         console.error('Session check error:', err);
