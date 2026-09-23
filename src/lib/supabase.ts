@@ -135,6 +135,11 @@ CREATE POLICY "Authenticated users can read procurement files"
     TO authenticated
     USING (bucket_id = 'dokumen-pengadaan');
 
+CREATE POLICY "Authenticated users can delete procurement files"
+    ON storage.objects FOR DELETE
+    TO authenticated
+    USING (bucket_id = 'dokumen-pengadaan');
+
 -- Trigger untuk update updated_at otomatis
 CREATE OR REPLACE FUNCTION public.handle_updated_at()
 RETURNS TRIGGER AS $$

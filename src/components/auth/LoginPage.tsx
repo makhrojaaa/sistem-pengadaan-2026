@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { BPSLogo } from '../common/BPSLogo';
-import { Lock, Mail, AlertCircle, Building2, UserCheck, ArrowRight } from 'lucide-react';
+import { Lock, Mail, AlertCircle, ArrowRight } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
   const { login } = useAuth();
-  const [email, setEmail] = useState('pejabat.pbj@bps.go.id');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -20,12 +20,6 @@ export const LoginPage: React.FC = () => {
       setError(result.error || 'Email atau password salah.');
     }
     setLoading(false);
-  };
-
-  const handleQuickSelect = (quickEmail: string) => {
-    setEmail(quickEmail);
-    setPassword('admin123');
-    setError(null);
   };
 
   return (
@@ -138,65 +132,6 @@ export const LoginPage: React.FC = () => {
               )}
             </button>
           </form>
-
-          {/* Quick Demo Access Roles */}
-          <div className="mt-8 pt-6 border-t border-[#183F6D]">
-            <p className="text-xs text-sky-200/80 text-center mb-3 font-semibold">
-              Pilih Akun Administrasi untuk Evaluasi Cepat:
-            </p>
-            <div className="space-y-2">
-              <button
-                type="button"
-                onClick={() => handleQuickSelect('ppk@bps.go.id')}
-                className="w-full text-left px-3 py-2.5 rounded-lg bg-[#071B33] hover:bg-[#11315B] border border-[#1D4A7E] text-xs flex items-center justify-between text-slate-200 transition-colors cursor-pointer"
-              >
-                <div className="flex items-center gap-2">
-                  <UserCheck className="w-4 h-4 text-[#F58220]" />
-                  <div>
-                    <div className="font-bold text-white">Wirda Elsa Hutari, S.Si., M.M.</div>
-                    <div className="text-[11px] text-[#F58220] font-medium">PPK • NIP 198908182019032002</div>
-                  </div>
-                </div>
-                <span className="text-[10px] px-2 py-0.5 rounded font-bold bg-[#F58220]/20 text-amber-300 border border-[#F58220]/40">
-                  Pilih
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickSelect('pejabat.pbj@bps.go.id')}
-                className="w-full text-left px-3 py-2.5 rounded-lg bg-[#071B33] hover:bg-[#11315B] border border-[#1D4A7E] text-xs flex items-center justify-between text-slate-200 transition-colors cursor-pointer"
-              >
-                <div className="flex items-center gap-2">
-                  <UserCheck className="w-4 h-4 text-[#48A942]" />
-                  <div>
-                    <div className="font-bold text-white">Firdaus, SST, M.T</div>
-                    <div className="text-[11px] text-[#48A942] font-medium">Pejabat Pengadaan • NIP 198602072009021004</div>
-                  </div>
-                </div>
-                <span className="text-[10px] px-2 py-0.5 rounded font-bold bg-[#48A942]/20 text-emerald-300 border border-[#48A942]/40">
-                  Pilih
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickSelect('admin.pengadaan@bps.go.id')}
-                className="w-full text-left px-3 py-2.5 rounded-lg bg-[#071B33] hover:bg-[#11315B] border border-[#1D4A7E] text-xs flex items-center justify-between text-slate-200 transition-colors cursor-pointer"
-              >
-                <div className="flex items-center gap-2">
-                  <Building2 className="w-4 h-4 text-sky-400" />
-                  <div>
-                    <div className="font-bold text-white">Admin Sistem</div>
-                    <div className="text-[11px] text-[#F58220] font-medium">admin.pengadaan@bps.go.id • BPS Kab. Tanah Datar</div>
-                  </div>
-                </div>
-                <span className="text-[10px] px-2 py-0.5 rounded font-bold bg-[#005C9E]/30 text-sky-300 border border-[#005C9E]/50">
-                  Pilih
-                </span>
-              </button>
-            </div>
-          </div>
         </div>
 
         {/* Security & Confidentiality Notice */}

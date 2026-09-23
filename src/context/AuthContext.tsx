@@ -8,112 +8,35 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
-  switchUserRole?: (role: User['role']) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const STORAGE_AUTH_USER = 'SPP_AUTH_USER_SESSION';
-
-const DEMO_USERS: Record<string, User> = {
-  'ppk@bps.go.id': {
-    id: 'usr-ppk-01',
-    email: 'ppk@bps.go.id',
-    name: 'Wirda Elsa Hutari, S.Si., M.M.',
-    nip: '198908182019032002',
-    role: 'Pejabat Pembuat Komitmen',
-    instansi: 'BPS Kabupaten Tanah Datar',
-  },
-  'pejabat.pbj@bps.go.id': {
-    id: 'usr-pejabat-01',
-    email: 'pejabat.pbj@bps.go.id',
-    name: 'Firdaus, SST, M.T',
-    nip: '198602072009021004',
-    role: 'Pejabat Pengadaan',
-    instansi: 'BPS Kabupaten Tanah Datar',
-  },
-  'admin.pengadaan@bps.go.id': {
-    id: 'usr-admin-01',
-    email: 'admin.pengadaan@bps.go.id',
-    name: 'Admin Sistem',
-    nip: '197908152003121002',
-    role: 'Admin Sistem',
-    instansi: 'BPS Kabupaten Tanah Datar',
-  },
-  'admin@bps.go.id': {
-    id: 'usr-admin-00',
-    email: 'admin@bps.go.id',
-    name: 'Admin Sistem',
-    nip: '197908152003121002',
-    role: 'Admin Sistem',
-    instansi: 'BPS Kabupaten Tanah Datar',
-  },
-  'pejabat.pbj@instansi.go.id': {
-    id: 'usr-pejabat-02',
-    email: 'pejabat.pbj@instansi.go.id',
-    name: 'Firdaus, SST, M.T',
-    nip: '198602072009021004',
-    role: 'Pejabat Pengadaan',
-    instansi: 'BPS Kabupaten Tanah Datar',
-  },
-  'admin.pengadaan@instansi.go.id': {
-    id: 'usr-admin-02',
-    email: 'admin.pengadaan@instansi.go.id',
-    name: 'Admin Sistem',
-    nip: '197908152003121002',
-    role: 'Admin Sistem',
-    instansi: 'BPS Kabupaten Tanah Datar',
-  },
-  'auditor.inspektorat@instansi.go.id': {
-    id: 'usr-auditor-03',
-    email: 'auditor.inspektorat@instansi.go.id',
-    name: 'Bambang Triatmojo, S.E., Ak., CA',
-    nip: '198111042006041001',
-    role: 'Auditor / Pengawas',
-    instansi: 'BPS Kabupaten Tanah Datar',
-  },
-};
+function buildUser(supabaseUser: any): User {
+  const email = supabaseUser.email || '';
+  return {
+    id: supabaseUser.id,
+    email,
+    name: supabaseUser.user_metadata?.full_name || email.split('@')[0] || 'Pengguna',
+    nip: supabaseUser.user_metadata?.nip,
+    role: supabaseUser.user_metadata?.role || 'Administrator PBJ',
+    instansi: supabaseUser.user_metadata?.instansi || 'BPS Kabupaten Tanah Datar',
+  };
+}
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    // Check existing session
+    // Restore existing Supabase session (if any)
     const checkSession = async () => {
       try {
         if (isSupabaseConfigured && supabase) {
           const { data } = await supabase.auth.getSession();
           if (data?.session?.user) {
-            const email = data.session.user.email || 'user@bps.go.id';
-            const existing = DEMO_USERS[email.toLowerCase()] || {
-              id: data.session.user.id,
-              email: email,
-              name: data.session.user.user_metadata?.full_name || email.split('@')[0],
-              role: 'Administrator PBJ',
-              instansi: 'BPS Kabupaten Tanah Datar',
-            };
-            setUser(existing);
-            setIsLoading(false);
-            return;
+            setUser(buildUser(data.session.user));
           }
-        }
-
-        const saved = localStorage.getItem(STORAGE_AUTH_USER);
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          parsed.instansi = 'BPS Kabupaten Tanah Datar';
-          if (parsed.role === 'Administrator PBJ' || parsed.email?.includes('admin') || parsed.role === 'Admin Sistem') {
-            parsed.name = 'Admin Sistem';
-            parsed.role = 'Admin Sistem';
-          }
-          setUser(parsed);
-          localStorage.setItem(STORAGE_AUTH_USER, JSON.stringify(parsed));
-        } else {
-          // Default session to Admin Sistem for immediate evaluation
-          const defaultAdmin = DEMO_USERS['admin.pengadaan@bps.go.id'];
-          setUser(defaultAdmin);
-          localStorage.setItem(STORAGE_AUTH_USER, JSON.stringify(defaultAdmin));
         }
       } catch (err) {
         console.error('Session check error:', err);
@@ -128,61 +51,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true);
     try {
-      // 1. Try Supabase Auth if configured
-      if (isSupabaseConfigured && supabase) {
-        try {
-          const { data, error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          });
-
-          if (!error && data?.user) {
-            const authenticatedUser: User = DEMO_USERS[email.toLowerCase()] || {
-              id: data.user.id,
-              email: data.user.email || email,
-              name: data.user.user_metadata?.full_name || email.split('@')[0],
-              role: 'Administrator PBJ',
-              instansi: 'BPS Kabupaten Tanah Datar',
-            };
-            setUser(authenticatedUser);
-            localStorage.setItem(STORAGE_AUTH_USER, JSON.stringify(authenticatedUser));
-            setIsLoading(false);
-            return { success: true };
-          }
-        } catch (supabaseErr) {
-          console.warn('Supabase auth error, checking demo credentials:', supabaseErr);
-        }
-      }
-
-      // 2. Standard Official Administrative Demo Authentication
-      // Valid credentials: any demo email with any password (or 'admin123', 'pbj2026', etc.)
-      const normalizedEmail = email.trim().toLowerCase();
-      const matchedUser = DEMO_USERS[normalizedEmail];
-
-      if (matchedUser && password.length >= 4) {
-        setUser(matchedUser);
-        localStorage.setItem(STORAGE_AUTH_USER, JSON.stringify(matchedUser));
+      if (!isSupabaseConfigured || !supabase) {
         setIsLoading(false);
-        return { success: true };
+        return { success: false, error: 'Database belum dikonfigurasi. Hubungi administrator.' };
       }
 
-      // If user enters custom institutional email with valid password
-      if (normalizedEmail.includes('@') && password.length >= 4) {
-        const customUser: User = {
-          id: `usr-${Date.now()}`,
-          email: normalizedEmail,
-          name: normalizedEmail.split('@')[0].toUpperCase(),
-          role: 'Administrator PBJ',
-          instansi: 'BPS Kabupaten Tanah Datar',
-        };
-        setUser(customUser);
-        localStorage.setItem(STORAGE_AUTH_USER, JSON.stringify(customUser));
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error || !data?.user) {
         setIsLoading(false);
-        return { success: true };
+        return { success: false, error: error?.message || 'Email atau password salah.' };
       }
 
+      setUser(buildUser(data.user));
       setIsLoading(false);
-      return { success: false, error: 'Email atau password salah.' };
+      return { success: true };
     } catch (err: any) {
       setIsLoading(false);
       return { success: false, error: err?.message || 'Terjadi kesalahan sistem saat login.' };
@@ -198,15 +81,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.warn('Supabase signout warning:', err);
     }
     setUser(null);
-    localStorage.removeItem(STORAGE_AUTH_USER);
-  };
-
-  const switchUserRole = (role: User['role']) => {
-    if (user) {
-      const updated = { ...user, role };
-      setUser(updated);
-      localStorage.setItem(STORAGE_AUTH_USER, JSON.stringify(updated));
-    }
   };
 
   return (
@@ -217,7 +91,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isLoading,
         login,
         logout,
-        switchUserRole,
       }}
     >
       {children}
