@@ -295,10 +295,14 @@ export async function savePengadaan(
 export async function archivePengadaan(id: string, currentUserEmail: string): Promise<boolean> {
   if (isSupabaseConfigured && supabase) {
     try {
-      await supabase
+      const { error } = await supabase
         .from('pengadaan')
         .update({ is_archived: true, updated_by: currentUserEmail, updated_at: new Date().toISOString() })
         .eq('id', id);
+      if (!error) {
+        return true;
+      }
+      console.warn('Supabase archive failed, falling back to local:', error);
     } catch (e) {
       console.warn('Supabase archive fallback:', e);
     }
@@ -319,10 +323,14 @@ export async function archivePengadaan(id: string, currentUserEmail: string): Pr
 export async function unarchivePengadaan(id: string, currentUserEmail: string): Promise<boolean> {
   if (isSupabaseConfigured && supabase) {
     try {
-      await supabase
+      const { error } = await supabase
         .from('pengadaan')
         .update({ is_archived: false, updated_by: currentUserEmail, updated_at: new Date().toISOString() })
         .eq('id', id);
+      if (!error) {
+        return true;
+      }
+      console.warn('Supabase unarchive failed, falling back to local:', error);
     } catch (e) {
       console.warn('Supabase unarchive fallback:', e);
     }
@@ -354,7 +362,25 @@ export async function fetchDokumenByPengadaanId(pengadaanId: string): Promise<Do
         .order('uploaded_at', { ascending: false });
 
       if (!error && data) {
-        return data;
+        // Regenerate signed URLs for private bucket files (valid 1 hour)
+        const docsWithUrls = await Promise.all(
+          data.map(async (d: DokumenPengadaan) => {
+            if (d.file_path) {
+              try {
+                const { data: signed } = await supabase.storage
+                  .from('dokumen-pengadaan')
+                  .createSignedUrl(d.file_path, 3600);
+                if (signed?.signedUrl) {
+                  return { ...d, file_url: signed.signedUrl };
+                }
+              } catch (signErr) {
+                console.warn('Signed URL generation failed:', signErr);
+              }
+            }
+            return d;
+          })
+        );
+        return docsWithUrls;
       }
     } catch (e) {
       console.warn('Supabase fetchDokumen fallback:', e);
@@ -492,7 +518,19 @@ export async function deleteDokumen(dokumenId: string): Promise<boolean> {
 
 export async function calculateDashboardStats(targetYear: string = '2026'): Promise<DashboardStats> {
   const pengadaanList = await fetchPengadaanList({ tahun: targetYear });
-  const allDocs = getLocalDokumen(); // or query supabase
+  let totalDokumenCount = getLocalDokumen().length;
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { count, error } = await supabase
+        .from('dokumen_pengadaan')
+        .select('id', { count: 'exact', head: true });
+      if (!error && count !== null) {
+        totalDokumenCount = count;
+      }
+    } catch (e) {
+      console.warn('Supabase dashboard dokumen count fallback:', e);
+    }
+  }
 
   let totalNilai = 0;
   const totalPengadaan = pengadaanList.length;
@@ -569,7 +607,7 @@ export async function calculateDashboardStats(targetYear: string = '2026'): Prom
     totalPengadaan,
     pengadaanBulanIni,
     nilaiBulanIni,
-    totalDokumen: allDocs.length,
+    totalDokumen: totalDokumenCount,
     pengadaanBelumSelesai,
     pengadaanByJenis: jenisMap,
     pengadaanByMetode: metodeMap,
