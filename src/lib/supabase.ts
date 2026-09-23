@@ -42,7 +42,7 @@ export const SUPABASE_SQL_SCHEMA = `-- =========================================
 
 -- 1. Tabel Utama: pengadaan
 CREATE TABLE IF NOT EXISTS public.pengadaan (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id TEXT PRIMARY KEY,
     tanggal DATE NOT NULL DEFAULT CURRENT_DATE,
     nomor_pengadaan VARCHAR(100) NOT NULL UNIQUE,
     nama_pengadaan VARCHAR(255) NOT NULL,
@@ -68,8 +68,8 @@ CREATE INDEX IF NOT EXISTS idx_pengadaan_nomor ON public.pengadaan(nomor_pengada
 
 -- 2. Tabel Dokumen Pendukung: dokumen_pengadaan (Relasi 1 to Many)
 CREATE TABLE IF NOT EXISTS public.dokumen_pengadaan (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    pengadaan_id UUID NOT NULL REFERENCES public.pengadaan(id) ON DELETE CASCADE,
+    id TEXT PRIMARY KEY,
+    pengadaan_id TEXT NOT NULL REFERENCES public.pengadaan(id) ON DELETE CASCADE,
     jenis_dokumen VARCHAR(100) NOT NULL,
     nama_file VARCHAR(255) NOT NULL,
     file_path TEXT NOT NULL,

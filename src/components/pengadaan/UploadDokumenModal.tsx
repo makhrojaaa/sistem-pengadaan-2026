@@ -236,7 +236,7 @@ export const UploadDokumenModal: React.FC<UploadDokumenModalProps> = ({
             <p className="mt-0.5">
               Berkas akan dienkripsi dan disimpan pada private storage{' '}
               <code className="bg-slate-200 px-1 py-0.5 rounded text-[11px]">dokumen-pengadaan</code>{' '}
-              menggunakan identifikasi UUID unik.
+              menggunakan identifikasi ID unik.
             </p>
           </div>
 
